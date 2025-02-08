@@ -29,4 +29,4 @@ export OUTPUT_FILE=
 
 # Limitations
 
-* Cannot conveniently filter game output by platform (Windows, Mac, Linux)
+- Cannot conveniently filter game output by platform (Windows, Mac, Linux)

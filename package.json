@@ -1,12 +1,12 @@
 {
   "dependencies": {
+    "lodash": "^4.17.21",
     "steamapi": "^2.1.2"
   },
   "name": "steamcmd-app-update",
   "description": "Outputs one `app_update <app-id> [-validate]` line per game in your Steam library.",
   "version": "1.0.0",
   "bin": "./index.js",
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -16,5 +16,9 @@
     "app_update"
   ],
   "author": "Matt Low <matt@mlow.ca>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/lodash": "^4.17.15",
+    "prettier": "3.4.2"
+  }
 }

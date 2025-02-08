@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 const fs = require("fs");
+const _ = require("lodash");
 
 const STEAM_API_KEY = process.env.STEAM_API_KEY;
 
 if (!STEAM_API_KEY) {
   console.error(
-    "The STEAM_API_KEY environment variable should contain your Steam API key."
+    "The STEAM_API_KEY environment variable should contain your Steam API key.",
   );
   console.error("See: https://steamcommunity.com/dev/apikey");
   process.exit(1);
@@ -20,7 +21,10 @@ if (!STEAM_PROFILE_ID) {
   process.exit(1);
 }
 
+/* =================== Whitelisting =================== */
+
 const skipGames = [];
+const whitelist = [];
 
 if (process.env.SKIP_GAMES) {
   process.env.SKIP_GAMES.split(",")
@@ -30,11 +34,21 @@ if (process.env.SKIP_GAMES) {
     });
 }
 
+if (process.env.GAMES_WHITELIST) {
+  process.env.GAMES_WHITELIST.split(",")
+    .map((game) => game.trim())
+    .forEach((game) => {
+      whitelist.push(game);
+    });
+}
+
 function shouldSkip(gameId, gameTitle) {
-  return (
-    // We could be comparing strings against numbers here, that's fine
-    skipGames.find((game) => game == gameId || game == gameTitle) !== undefined
-  );
+  const isUsingWhitelist = !!whitelist.length
+  const whitelistMatches = _.intersection([gameId, gameTitle], whitelist)
+  if (isUsingWhitelist && !whitelistMatches.length) {
+    return true
+  }
+  return !!(_.intersection(skipGames, [gameId, gameTitle])).length
 }
 
 function getOutputStream() {
@@ -54,7 +68,7 @@ steam
       .sort((a, b) => a.appID - b.appID)
       .forEach((game) => {
         stream.write(
-          `// ${game.name} - https://store.steampowered.com/app/${game.appID}\n`
+          `// ${game.name} - https://store.steampowered.com/app/${game.appID}\n`,
         );
         stream.write(`app_update ${game.appID}${validateFlag}\n`);
       });
